@@ -770,9 +770,12 @@
         </div>
     </div>
 
-    <script>
+
+
+
+<script>
         let valorAtual = '199';
-        let dadosCliente = { whatsapp: '', numeroEnvio: '' };
+        let dadosCliente = { nome: '', whatsapp: '' };
 
         // Detecta se está dentro de WebView (TikTok, Facebook, Instagram)
         function isInsideWebView() {
@@ -789,10 +792,9 @@
                     <div class="data-card">
                         <div class="data-header">🔐 Confirmar Acesso VIP - ${valor} MZN</div>
                         <div class="data-body">
-                            <p style="text-align:center; margin-bottom:10px;">Preencha os dados para continuar</p>
-                            <input type="tel" id="whatsappInput" class="data-input" placeholder="📱 Seu WhatsApp (ex: 841234567)" autocomplete="off">
-                            <input type="tel" id="numeroEnvioInput" class="data-input" placeholder="💰 Número que vai enviar o valor (M-Pesa/E-Mola)" autocomplete="off">
-                            <button class="btn-enviar" onclick="enviarDados()">📤 ENVIAR DADOS</button>
+                            <p style="text-align:center; margin-bottom:10px;">Passo 1 de 2</p>
+                            <input type="text" id="nomeInput" class="data-input" placeholder="👤 Seu primeiro nome" autocomplete="off">
+                            <button class="btn-enviar" onclick="proximoPasso1()">📤 CONTINUAR</button>
                             <button style="background:#999; margin-top:10px;" class="btn-enviar" onclick="fecharModal('dataModal')">❌ Cancelar</button>
                         </div>
                     </div>
@@ -803,20 +805,35 @@
             document.body.style.overflow = 'hidden';
         }
 
+        function proximoPasso1() {
+            const nome = document.getElementById('nomeInput').value.trim();
+            
+            if (!nome || nome.length < 2) {
+                mostrarNotificacao("⚠️ Por favor, insira seu primeiro nome (mínimo 2 letras)");
+                return;
+            }
+            
+            dadosCliente.nome = nome;
+            
+            // Mostrar segundo campo (WhatsApp)
+            const modalBody = document.querySelector('#dataModal .data-body');
+            modalBody.innerHTML = `
+                <p style="text-align:center; margin-bottom:10px;">Passo 2 de 2</p>
+                <input type="tel" id="whatsappInput" class="data-input" placeholder="📱 Seu número do WhatsApp (ex: 841234567)" autocomplete="off">
+                <button class="btn-enviar" onclick="enviarDados()">📤 ENVIAR DADOS</button>
+                <button style="background:#999; margin-top:10px;" class="btn-enviar" onclick="fecharModal('dataModal')">❌ Cancelar</button>
+            `;
+        }
+
         function enviarDados() {
             const whats = document.getElementById('whatsappInput').value.trim();
-            const numeroEnvio = document.getElementById('numeroEnvioInput').value.trim();
             
             if (!whats || whats.length < 9) {
                 mostrarNotificacao("⚠️ Por favor, insira um número de WhatsApp válido (ex: 841234567)");
                 return;
             }
-            if (!numeroEnvio || numeroEnvio.length < 9) {
-                mostrarNotificacao("⚠️ Por favor, insira o número M-Pesa/E-Mola que vai usar para enviar o pagamento");
-                return;
-            }
             
-            dadosCliente = { whatsapp: whats, numeroEnvio: numeroEnvio };
+            dadosCliente.whatsapp = whats;
             
             const modalBody = document.querySelector('#dataModal .data-body');
             modalBody.innerHTML = `
@@ -833,7 +850,9 @@
                     <div style="text-align:center; padding:20px;">
                         <div style="font-size:50px;">✅</div>
                         <h3>Dados enviados com sucesso!</h3>
-                        <p>🔔 Assim que terminar o pagamento, seus conteúdos serão enviados para <strong>${whats}</strong></p>
+                        <p> <strong>${dadosCliente.nome}</strong>… respira fundo. 💋
+Assim que o pagamento cair, vou te enviar vídeos e fotos que só os VIPs têm… tudo no <strong>${dadosCliente.whatsapp}</strong>.
+🔥 Tô aqui. Só falta você.</p>
                         <p style="margin-top:10px; font-size:13px; color:#777;">Redirecionando para página de pagamento...</p>
                     </div>
                 `;
